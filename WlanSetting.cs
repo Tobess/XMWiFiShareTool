@@ -149,7 +149,7 @@ namespace VirtualRouterPlus
         public static string StringToHex(string str)
         {
             StringBuilder sb = new StringBuilder();
-            byte[] byStr = System.Text.Encoding.Default.GetBytes(str); //默认是System.Text.Encoding.Default.GetBytes(str)
+            byte[] byStr = Encoding.Default.GetBytes(str); //默认是System.Text.Encoding.Default.GetBytes(str)
             for (int i = 0; i < byStr.Length; i++)
             {
                 sb.Append(Convert.ToString(byStr[i], 16));
