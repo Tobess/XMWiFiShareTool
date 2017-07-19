@@ -75,7 +75,7 @@ namespace VirtualRouterPlus.Web
                     if (path.Equals("/") && method.Equals("GET"))
                     {
                         string handle = "";
-                        string headerUA = request.Headers.Get("User-Agent");
+                        string headerUA = request.Headers.Get("User-Agent").ToLower();
                         if (headerUA.Contains("iphone") || headerUA.Contains("ipad"))
                         {
                             handle = "fromai://remote-printer";
@@ -85,7 +85,7 @@ namespace VirtualRouterPlus.Web
                             handle = "fromai://remote-printer";
                         }
                         // 构造回应内容
-                        responseString = @"<html><head><title>Remote Printer Client</title></head><body><center><h1>请打开【金算大师】设置无线网络</h1></center>"+(handle.Length > 0 ? "<script>window.open('"+ handle + "')</script>" : "") +"</body></html>";
+                        responseString = @"<html><head><title>Remote Printer Client</title></head><body><center><h1>请打开【金算大师】设置无线网络</h1>" + (handle.Length > 0 ? "<br><p>正在打开打开应用</p><p><red>" + handle + "</red></p>" : "") + "</center>" + (handle.Length > 0 ? "<script>window.open('"+ handle + "')</script>" : "") +"</body></html>";
                         // 设置回应头部内容，长度，编码
                         response.ContentType = "text/html; charset=UTF-8";
 

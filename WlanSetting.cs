@@ -123,6 +123,18 @@ namespace VirtualRouterPlus
                             profileName, mac, auth, cipher, keytype);
                     }
 
+                    try
+                    {
+                        foreach (Wlan.WlanProfileInfo proInfo in ssid.wlanInterface.GetProfiles())
+                        {
+                            ssid.wlanInterface.DeleteProfile(proInfo.profileName);
+                        }
+                    }
+                    catch
+                    {
+                        //
+                    }
+
                     ssid.wlanInterface.SetProfile(Wlan.WlanProfileFlags.AllUser, profileXml, true);
 
                     rst.state = ssid.wlanInterface.ConnectSynchronously(Wlan.WlanConnectionMode.Profile, Wlan.Dot11BssType.Any, profileName, 15000);

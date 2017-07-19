@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,6 +21,7 @@ namespace VirtualRouterPlus
         bool isStarted;
         string SSID = "hotspot";
         string PWD = "12345678";
+        string identify = null;
         bool custom = false;
 
         public MainForm()
@@ -31,15 +33,19 @@ namespace VirtualRouterPlus
         {
             InitializeComponent();
 
-            if (args.Length > 0 && args.Length <=2)
+            if (args.Length > 0 && args.Length <=3)
             {
-                SSID = args[0];
-                if (args.Length == 2)
+                identify = args[0];
+                if (args.Length > 1)
                 {
-                    PWD = args[1];
+                    SSID = args[1];
+                    if (args.Length > 2)
+                    {
+                        PWD = args[2];
+                    }
                 }
+                custom = true;
             }
-            custom = true;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -88,26 +94,53 @@ namespace VirtualRouterPlus
                 {
                     isStarted = false;
                     notifyIcon.ShowBalloonTip(5000, "成功", "成功停止无线虚拟路由器！", ToolTipIcon.Info);
+                    if (custom)
+                    {
+                        try
+                        {
+                            RegistryKey key = Registry.CurrentUser;
+                            RegistryKey rp = key.CreateSubKey("Software\\RemotePrinter");
+                            rp.SetValue("RP_HOTSPOT", "");
+                        }
+                        catch
+                        {
+                            //
+                        }
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("无法停止！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    notifyIcon.ShowBalloonTip(5000, "错误", "无法停止！", ToolTipIcon.Error);
                 }
             }
             else
             {
-                if (!ValidateFields())
-                    return;
+                if (ValidateFields())
+                {
+                    if (Start(ssidTextBox.Text, passwordTextBox.Text, (IcsConnection)connectionComboBox.SelectedItem, 16))
+                    {
+                        isStarted = true;
+                        WindowState = FormWindowState.Minimized;
+                        notifyIcon.ShowBalloonTip(5000, "成功", "成功启动无线虚拟路由器！", ToolTipIcon.Info);
 
-                if (Start(ssidTextBox.Text, passwordTextBox.Text, (IcsConnection)connectionComboBox.SelectedItem, 16))
-                {
-                    isStarted = true;
-                    WindowState = FormWindowState.Minimized;
-                    notifyIcon.ShowBalloonTip(5000, "成功", "成功启动无线虚拟路由器！", ToolTipIcon.Info);
-                }
-                else
-                {
-                    MessageBox.Show("无法启动虚拟无线路由器，未找到支持的硬件或无线网卡被禁用！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (custom)
+                        {
+                            try
+                            {
+                                RegistryKey key = Registry.CurrentUser;
+                                RegistryKey rp = key.CreateSubKey("Software\\RemotePrinter");
+                                rp.SetValue("RP_HOTSPOT", identify.ToString());
+                            }
+                            catch
+                            {
+                                //
+                            }
+                        }
+                    }
+                    else
+                    {
+                        notifyIcon.ShowBalloonTip(5000, "错误", "无法启动虚拟无线路由器，未找到支持的硬件或无线网卡被禁用！", ToolTipIcon.Error);
+                    }
                 }
             }
             string AppDir = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
