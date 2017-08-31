@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -19,8 +20,8 @@ namespace VirtualRouterPlus
         IcsManager icsManager = new IcsManager();
 
         bool isStarted;
-        string SSID = "hotspot";
-        string PWD = "12345678";
+        string SSID = "ZA_PRINTER";
+        string PWD = "123456789";
         string identify = null;
         bool custom = false;
 
