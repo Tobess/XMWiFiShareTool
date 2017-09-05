@@ -252,7 +252,7 @@ namespace VirtualRouterPlus
             }
 
             var noSelected = true;
-            for (var i = 0; i <= connectionComboBox.Items.Count; i++)
+            for (var i = 0; i < connectionComboBox.Items.Count; i++)
             {
                 IcsConnection conn = (IcsConnection)connectionComboBox.Items[i];
                 if (conn.Name.Contains("Ethernet"))
